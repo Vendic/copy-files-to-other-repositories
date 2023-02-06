@@ -5,7 +5,7 @@ inputs:
     description: >
       Token to use GitHub API. It must have "repo" and "workflow" scopes so it can push to repo and edit workflows.
       It cannot be the default GitHub Actions token GITHUB_TOKEN. GitHub Action token's permissions are limited to the repository that contains your workflows.
-      Provide token of the user that has rights to push to the repos that this action is suppose to update. 
+      Provide token of the user that has rights to push to the repos that this action is suppose to update.
     required: true
   committer_username:
     description: >
@@ -35,7 +35,7 @@ inputs:
     description: >
       Comma-separated list of file paths or directories that should be handled by this action and updated in other repositories.
       In the format `.github/workflows`.
-    required: true  
+    required: true
   repos_to_ignore:
     description: >
       Comma-separated list of repositories that should not get updates from this action.
@@ -69,7 +69,7 @@ inputs:
       Name of the directory where all files matching "patterns_to_include" will be copied. In the format `.github/workflows`.
     required: false
 runs:
-  using: node12
+  using: node16
   main: dist/index.js
 branding:
   icon: compass

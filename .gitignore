@@ -1,3 +1,5 @@
 node_modules
 clones
 .DS_Store
+.idea/*
+*~
