@@ -9,7 +9,7 @@ const core = __nccwpck_require__(7484);
 module.exports = { getCommitFiles, getReposList, createPr, getRepo, getBranchesRemote };
 
 async function getCommitFiles(octokit, commitId, owner, repo) {
-  const { data: { files } } = await octokit.repos.getCommit({
+  const { data: { files } } = await octokit.rest.repos.getCommit({
     owner,
     repo,
     ref: commitId
@@ -22,7 +22,7 @@ async function getBranchesRemote(octokit, owner, repo) {
   core.info('Getting list of all the branches for the repository');
 
   const allBranches = await octokit.paginate(
-    octokit.repos.listBranches,
+    octokit.rest.repos.listBranches,
     {
       owner,
       repo
@@ -48,7 +48,7 @@ async function getBranchesRemote(octokit, owner, repo) {
 async function getRepo(octokit, owner, repo) {
   core.info(`Getting details of manually selected ${repo} repository`);
 
-  const { data } = await octokit.repos.get({
+  const { data } = await octokit.rest.repos.get({
     owner,
     repo
   });
@@ -81,7 +81,7 @@ async function getReposList(octokit, owner) {
   * Checking if action runs for organization or user as then to list repost there are different api calls
   */
   try {
-    await octokit.orgs.get({
+    await octokit.rest.orgs.get({
       org: owner,
     });
 
@@ -89,7 +89,7 @@ async function getReposList(octokit, owner) {
   } catch (error) {
     if (error.status === 404) {
       try {
-        await octokit.users.getByUsername({
+        await octokit.rest.users.getByUsername({
           username: owner,
         });
         isUser = true;
@@ -105,12 +105,12 @@ async function getReposList(octokit, owner) {
   * Getting list of repos
   */
   if (isUser) {
-    response = await octokit.paginate(octokit.repos.listForUser, {
+    response = await octokit.paginate(octokit.rest.repos.listForUser, {
       username: owner,
       per_page: 100
     });
   } else {
-    response = await octokit.paginate(octokit.repos.listForOrg, {
+    response = await octokit.paginate(octokit.rest.repos.listForOrg, {
       org: owner,
       per_page: 100
     });
@@ -2565,6 +2565,54 @@ class Context {
 }
 exports.Context = Context;
 //# sourceMappingURL=context.js.map
+
+/***/ }),
+
+/***/ 3228:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getOctokit = exports.context = void 0;
+const Context = __importStar(__nccwpck_require__(1648));
+const utils_1 = __nccwpck_require__(8006);
+exports.context = new Context.Context();
+/**
+ * Returns a hydrated octokit ready to use for GitHub Actions
+ *
+ * @param     token    the repo PAT or GITHUB_TOKEN
+ * @param     options  other options to set
+ */
+function getOctokit(token, options, ...additionalPlugins) {
+    const GitHubWithPlugins = utils_1.GitHub.plugin(...additionalPlugins);
+    return new GitHubWithPlugins((0, utils_1.getOctokitOptions)(token, options));
+}
+exports.getOctokit = getOctokit;
+//# sourceMappingURL=github.js.map
 
 /***/ }),
 
@@ -43233,7 +43281,7 @@ const simpleGit = __nccwpck_require__(9065);
 const path = __nccwpck_require__(6928);
 const { mkdir } = (__nccwpck_require__(9896).promises);
 const { retry } = __nccwpck_require__(9250);
-const { GitHub, getOctokitOptions } = __nccwpck_require__(8006);
+const { getOctokit } = __nccwpck_require__(3228);
 
 const { createBranch, clone, push, areFilesChanged, getBranchesLocal, checkoutBranch } = __nccwpck_require__(9412);
 const { getReposList, createPr, getRepo } = __nccwpck_require__(9580);
@@ -43273,11 +43321,10 @@ async function run() {
 
     const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
 
-    const octokit = GitHub.plugin(retry);
-    const myOctokit = new octokit(getOctokitOptions(gitHubKey, {
+    const myOctokit = getOctokit(gitHubKey, {
       // Topics are currently only available using mercy-preview.
       previews: ['mercy-preview'],
-    }));
+    }).plugin(retry);
 
     //Id of commit can be taken only from push event, not workflow_dispatch
     //TODO for now this action is hardcoded to always get commit id of the first commit on the list
