@@ -41772,20 +41772,8 @@ async function run() {
           
               if (pullRequestUrl) {
                 core.info(`Workflow finished with success and PR for ${repo.name} is created -> ${pullRequestUrl}`);
-              } else if (!pullRequestUrl && wasBranchThereAlready) {
-                core.info(`Workflow finished without PR creation for ${repo.name}. Insted push was performed to existing ${newBranchName} branch`);
-              } else {
-                core.info(`Unable to create a PR because of timeouts. Create PR manually from the branch ${newBranchName} that was already created in the upstream`);
-              }
-
-              // Sleep between PR creations if configured
-              if (sleepPrCreation > 0) {
-                core.info(`Sleeping for ${sleepPrCreation} seconds before processing next repository...`);
-                await new Promise(resolve => setTimeout(resolve, sleepPrCreation * 1000));
-              }
-
-              // Auto-merge PR after 5 seconds using merge commit
-              if (pullRequestUrl) {
+                
+                // Auto-merge PR after 5 seconds using merge commit
                 core.info(`Attempting to auto-merge PR after 5 seconds...`);
                 await new Promise(resolve => setTimeout(resolve, 5000));
                 try {
@@ -41800,6 +41788,16 @@ async function run() {
                 } catch (mergeError) {
                   core.warning(`Failed to auto-merge PR for ${repo.name}: ${mergeError.message}`);
                 }
+              } else if (!pullRequestUrl && wasBranchThereAlready) {
+                core.info(`Workflow finished without PR creation for ${repo.name}. Insted push was performed to existing ${newBranchName} branch`);
+              } else {
+                core.info(`Unable to create a PR because of timeouts. Create PR manually from the branch ${newBranchName} that was already created in the upstream`);
+              }
+
+              // Sleep between PR creations if configured
+              if (sleepPrCreation > 0) {
+                core.info(`Sleeping for ${sleepPrCreation} seconds before processing next repository...`);
+                await new Promise(resolve => setTimeout(resolve, sleepPrCreation * 1000));
               }
             } else {
               core.endGroup();
