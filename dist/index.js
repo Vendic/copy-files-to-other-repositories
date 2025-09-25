@@ -41783,6 +41783,24 @@ async function run() {
                 core.info(`Sleeping for ${sleepPrCreation} seconds before processing next repository...`);
                 await new Promise(resolve => setTimeout(resolve, sleepPrCreation * 1000));
               }
+
+              // Auto-merge PR after 5 seconds using merge commit
+              if (pullRequestUrl) {
+                core.info(`Attempting to auto-merge PR after 5 seconds...`);
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                try {
+                  const prNumber = pullRequestUrl.split('/').pop();
+                  await myOctokit.rest.pulls.merge({
+                    owner: owner,
+                    repo: repo.name,
+                    pull_number: prNumber,
+                    merge_method: 'merge'
+                  });
+                  core.info(`Successfully auto-merged PR #${prNumber} for ${repo.name} using merge commit`);
+                } catch (mergeError) {
+                  core.warning(`Failed to auto-merge PR for ${repo.name}: ${mergeError.message}`);
+                }
+              }
             } else {
               core.endGroup();
               core.info('Finished with success. No PR was created as no changes were detected');
