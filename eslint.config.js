@@ -1,0 +1,87 @@
+const globals = require('globals');
+
+module.exports = [
+  {
+    files: ['**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2018,
+      sourceType: 'commonjs',
+      globals: {
+        ...globals.node,
+        ...globals.jest,
+      },
+    },
+    rules: {
+      // Ignore Rules
+      strict: 'off',
+      'no-underscore-dangle': 'off',
+      'no-mixed-requires': 'off',
+      'no-process-exit': 'off',
+      'no-warning-comments': 'off',
+      curly: 'off',
+      'no-multi-spaces': 'off',
+      'no-alert': 'off',
+      'consistent-return': 'off',
+      'func-style': 'off',
+      'max-nested-callbacks': 'off',
+      camelcase: 'off',
+
+      // Warnings
+      'no-debugger': 'warn',
+      'no-empty': 'warn',
+      'no-invalid-regexp': 'warn',
+      'no-unused-expressions': 'warn',
+      'no-fallthrough': 'warn',
+
+      // Errors
+      eqeqeq: 'error',
+      'no-undef': 'error',
+      'no-dupe-keys': 'error',
+      'no-empty-character-class': 'error',
+      'no-self-compare': 'error',
+      'valid-typeof': 'error',
+      'no-unused-vars': ['error', { args: 'none' }],
+      'no-shadow-restricted-names': 'error',
+      'no-mixed-spaces-and-tabs': 'error',
+      'block-scoped-var': 'error',
+      'no-else-return': 'error',
+      'no-throw-literal': 'error',
+      'no-void': 'error',
+      radix: 'error',
+      'wrap-iife': ['error', 'outside'],
+      'no-shadow': 'off',
+      'no-use-before-define': ['error', 'nofunc'],
+
+      // Stylistic errors
+      'no-lonely-if': 'error',
+      'no-floating-decimal': 'error',
+      'brace-style': ['error', '1tbs', { allowSingleLine: true }],
+      'comma-style': ['error', 'last'],
+      'no-multiple-empty-lines': ['error', { max: 1 }],
+      'no-nested-ternary': 'error',
+      'padded-blocks': ['error', 'never'],
+      'quote-props': ['error', 'as-needed'],
+      'keyword-spacing': ['error', { before: true, after: true }],
+      'space-before-blocks': ['error', 'always'],
+      'array-bracket-spacing': ['error', 'never'],
+      'computed-property-spacing': ['error', 'never'],
+      'space-in-parens': ['error', 'never'],
+      'space-unary-ops': ['error', { words: true, nonwords: false }],
+      semi: ['error', 'always'],
+      'arrow-spacing': ['error', { before: true, after: true }],
+      'no-class-assign': 'error',
+      'no-const-assign': 'error',
+      'no-dupe-class-members': 'error',
+      'no-this-before-super': 'error',
+      'no-var': 'error',
+      'object-shorthand': ['error', 'always'],
+      'prefer-arrow-callback': 'error',
+      'prefer-const': 'error',
+      'prefer-spread': 'error',
+      'prefer-template': 'error',
+    },
+  },
+  {
+    ignores: ['node_modules/', 'dist/', '*.min.js'],
+  },
+];

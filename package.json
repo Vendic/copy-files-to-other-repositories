@@ -4,8 +4,8 @@
   "description": "This action enables you to copy/update/remove files from one repo to multiple other repos automatically in one shot.",
   "main": "lib/index.js",
   "scripts": {
-    "start": "rimraf ./clones && node lib/index.js",
-    "dev": "DEBUG=simple-git npm start",
+    "start": "node lib/index.js",
+    "dev": "DEBUG=github-api npm start",
     "package": "ncc build lib/index.js -o dist",
     "gitAdd": "git add dist/index.js",
     "gen-readme-toc": "markdown-toc -i README.md",
@@ -32,15 +32,15 @@
     "@actions/github": "^6.0.1",
     "@octokit/plugin-retry": "^8.0.1",
     "debug": "^4.4.1",
-    "fs-extra": "^11.3.0",
     "markdown-toc": "^1.2.0",
-    "simple-git": "^3.28.0"
+    "micromatch": "^4.0.8"
   },
   "devDependencies": {
     "@vercel/ncc": "^0.38.3",
     "eslint": "^9.31.0",
     "eslint-plugin-jest": "^29.0.1",
     "eslint-plugin-sonarjs": "^3.0.4",
+    "globals": "^16.4.0",
     "jest": "^30.0.4",
     "pre-commit": "^1.2.2",
     "rimraf": "^6.0.1"
